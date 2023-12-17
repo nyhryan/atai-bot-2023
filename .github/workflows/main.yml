@@ -3,13 +3,8 @@ run-name: ${{ github.actor }} is deploying!
 on: [push]
 
 jobs:
-  checkout-repo:
+  deploy-bot:
     runs-on: self-hosted
     steps:
       - uses: actions/checkout@v4.1.1
-
-  deploy-bot:
-    runs-on: self-hosted
-    needs: checkout-repo
-    steps:
       - run: npm ci
