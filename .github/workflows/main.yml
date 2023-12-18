@@ -12,6 +12,13 @@ jobs:
       - name: Check out the repo to the runner
         uses: actions/checkout@v4.1.1
 
+      - name: Create .env file
+        run: |
+          touch .env
+          echo TOKEN=${{ secrets.TOKEN }} > .env
+          echo CLIENT_ID=${{ secrets.CLIENT_ID }} >> .env
+          echo GUILD_ID=${{ secrets.GUILD_ID }} >> .env
+
       - name: Redeploy bot
         run: |
           npm i
