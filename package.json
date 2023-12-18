@@ -10,12 +10,18 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@pdf-lib/upng": "^1.0.1",
+    "apng-js": "^1.1.1",
+    "apng-js-no-blob": "^2.0.0",
     "axios": "^1.6.2",
     "canvas": "^2.11.2",
     "discord.js": "^14.14.1",
     "dotenv": "^16.3.1",
+    "emoji-regex": "^10.3.0",
+    "emojilib": "^3.0.11",
     "gifwrap": "^0.10.1",
-    "jimp": "^0.22.10"
+    "jimp": "^0.22.10",
+    "node-html-parser": "^6.1.11"
   },
   "devDependencies": {
     "eslint": "^8.56.0",
