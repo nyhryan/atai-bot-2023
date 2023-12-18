@@ -1,4 +1,5 @@
 const { Events } = require('discord.js');
+const { wrap } = require('../helper/helper');
 
 module.exports = {
 	name: Events.InteractionCreate,
@@ -12,10 +13,8 @@ module.exports = {
 			return;
 		}
 
-		try {
-			await command.execute(interaction);
-		}
-		catch (error) {
+		const [, error] = await wrap(command.execute(interaction));
+		if (error) {
 			console.error(error);
 			if (interaction.replied || interaction.deferred) {
 				await interaction.followUp({ content: 'There was an error while executing this command!', ephemeral: true });
