@@ -14,11 +14,11 @@ const client = new Client(
 	},
 );
 
-client.commands = new Collection();
-
 const foldersPath = path.join(__dirname, 'commands');
 const commandFolders = fs.readdirSync(foldersPath);
 
+// add all commands in commands directory to client.commands collection
+client.commands = new Collection();
 for (const folder of commandFolders) {
 	const commandsPath = path.join(foldersPath, folder);
 	const commandFiles = fs.readdirSync(commandsPath).filter(file => file.endsWith('.js'));
@@ -35,6 +35,7 @@ for (const folder of commandFolders) {
 	}
 }
 
+// add all events in events directory to client event listener
 const eventsPath = path.join(__dirname, 'events');
 const eventFiles = fs.readdirSync(eventsPath).filter(file => file.endsWith('.js'));
 
@@ -49,4 +50,5 @@ for (const file of eventFiles) {
 	}
 }
 
+// login to Discord with your app's token
 client.login(process.env.TOKEN);
