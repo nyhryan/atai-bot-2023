@@ -1,4 +1,4 @@
-const { AttachmentBuilder, Events } = require('discord.js');
+const { AttachmentBuilder, EmbedBuilder, Events } = require('discord.js');
 const { GifFrame, GifUtil, GifCodec, BitmapImage } = require('gifwrap');
 const { wrap } = require('../helper/helper');
 const { parse } = require('node-html-parser');
@@ -134,8 +134,17 @@ module.exports = {
 			return;
 		}
 
+		const embedMesssage = new EmbedBuilder()
+			.setColor(0x9accfd)
+			.setAuthor({
+				name: message.author.globalName,
+				iconURL: `https://cdn.discordapp.com/avatars/${message.author.id}/${message.author.avatar}.png`,
+			})
+			.setImage(`attachment://${attachment.name}`);
+
 		// Send enlarged emoji
 		const [, sendErr] = await wrap(channel.send({
+			embeds: [embedMesssage],
 			files: [attachment],
 		}));
 		if (sendErr) {
