@@ -1,3 +1,6 @@
+const fs = require('fs/promises');
+const crypto = require('crypto');
+
 module.exports = {
 	/**
 	 * Wraps a promise that resolves to a [value, reason] array.
@@ -9,5 +12,23 @@ module.exports = {
 	wrap : async (promise) => {
 		const [{ value, reason }] = await Promise.allSettled([promise]);
 		return [value, reason];
+	},
+
+	getCacheDir : (() => {
+		const cacheDir = './node_modules/.cache';
+
+		let prom = undefined;
+		return () => prom = (prom || (async () => {
+			await fs.mkdir(cacheDir, { recursive: true });
+
+			return cacheDir;
+		})());
+	})(),
+
+	sha: (x) => crypto.createHash('sha256').update(x).digest('hex'),
+
+	fileExists : async (file) => {
+		return fs.access(file, fs.constants.F_OK)
+			.then(() => true).catch(() => false);
 	},
 };

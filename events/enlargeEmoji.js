@@ -1,7 +1,9 @@
 const { AttachmentBuilder, EmbedBuilder, Events } = require('discord.js');
 const { GifFrame, GifUtil, GifCodec, BitmapImage } = require('gifwrap');
-const { wrap } = require('../helper/helper');
+const { wrap, getCacheDir, fileExists, sha } = require('../helper/helper');
 const { parse } = require('node-html-parser');
+const fs = require('fs/promises');
+const path = require('path');
 const Jimp = require('jimp');
 const axios = require('axios');
 const emojiRegex = require('emoji-regex');
@@ -23,6 +25,7 @@ module.exports = {
 		else if (resultDiscordEmoji === null && resultUnicodeEmojis !== null && resultUnicodeEmojis.length > 1) {
 			return;
 		}
+
 		// check if message.content only contains a single emoji
 		const emojiObj = {
 			animated: false,
@@ -31,12 +34,14 @@ module.exports = {
 			src: '',
 		};
 
+		// if it's a discord emoji
 		if (resultUnicodeEmojis === null && resultDiscordEmoji !== null) {
 			emojiObj.animated = resultDiscordEmoji[0].match(/^<a:/g) !== null ? true : false;
 			emojiObj.id = resultDiscordEmoji[0].match(/\d{2,}/g)[0];
 			emojiObj.name = resultDiscordEmoji[0].match(/:\w+:/g)[0].replace(/:/g, '');
 			emojiObj.src = `https://cdn.discordapp.com/emojis/${emojiObj.id}`;
 		}
+		// if it's an unicode emoji
 		else {
 			emojiObj.animated = false;
 			emojiObj.name = emojiJson[resultUnicodeEmojis[0]][0].replace(/[_\s]/g, '-');
@@ -51,12 +56,59 @@ module.exports = {
 			emojiObj.src = parse(response.data).querySelector('main section > div > div > div > div > img').getAttribute('src');
 		}
 
+		// if cached emoji exists, send cached emoji
+		const cachedEmojiFile = path.join(await getCacheDir(), sha(emojiObj.name + emojiObj.src));
+		if (await fileExists(cachedEmojiFile)) {
+			const [cachedEmoji, cachedEmojiErr] = await wrap(Jimp.read(cachedEmojiFile));
+			if (cachedEmojiErr) {
+				console.error(cachedEmojiErr);
+				return;
+			}
+
+			const [cachedToBuffer, cachedToBufferErr] = await wrap(cachedEmoji.getBufferAsync(emojiObj.animated ? Jimp.MIME_GIF : Jimp.MIME_PNG));
+			if (cachedToBufferErr) {
+				console.error(cachedToBufferErr);
+				return;
+			}
+
+			const attachment = new AttachmentBuilder('');
+			attachment.attachment = cachedToBuffer;
+			attachment.name = `${emojiObj.name}.${emojiObj.animated ? 'gif' : 'png'}`;
+
+			// Delete original message
+			const channel = message.client.channels.cache.get(message.channelId);
+			const [, deleteErr] = await wrap(message.delete());
+			if (deleteErr) {
+				console.error(deleteErr);
+				return;
+			}
+
+			const embedMesssage = new EmbedBuilder()
+				.setColor(0x9accfd)
+				.setAuthor({
+					name: message.author.globalName,
+					iconURL: `https://cdn.discordapp.com/avatars/${message.author.id}/${message.author.avatar}.${emojiObj.animated ? 'gif' : 'png'}`,
+				})
+				.setImage(`attachment://${attachment.name}`);
+
+			// Send enlarged emoji
+			const [, sendErr] = await wrap(channel.send({
+				embeds: [embedMesssage],
+				files: [attachment],
+			}));
+			if (sendErr) {
+				console.error(sendErr);
+				return;
+			}
+
+			return;
+		}
+
 		const [frameImage, frameImageErr] = await wrap(Jimp.read('./assets/frame.png'));
 		if (frameImageErr) {
 			console.error(frameImageErr);
 			return;
 		}
-
 		const attachment = new AttachmentBuilder('');
 		// if user sent an animated emoji
 		if (emojiObj.animated) {
@@ -99,6 +151,13 @@ module.exports = {
 				return;
 			}
 
+			// Write gif to cache
+			const [, writeErr] = await wrap(fs.writeFile(cachedEmojiFile, encodedGif.buffer, 'binary'));
+			if (writeErr) {
+				console.error(writeErr);
+				return;
+			}
+
 			// Set attachment
 			attachment.attachment = encodedGif.buffer;
 			attachment.name = `${emojiObj.name}.gif`;
@@ -113,6 +172,13 @@ module.exports = {
 
 			emojiPng.resize(128, 128);
 			frameImage.composite(emojiPng, 7, 27);
+
+			// Write gif to cache
+			const [, writeErr] = await wrap(frameImage.writeAsync(cachedEmojiFile));
+			if (writeErr) {
+				console.error(writeErr);
+				return;
+			}
 
 			// Get png buffer
 			const [pngBuffer, pngBufferErr] = await wrap(frameImage.getBufferAsync(Jimp.MIME_PNG));
