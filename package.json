@@ -3,8 +3,10 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "type": "module",
   "scripts": {
-    "watch": "nodemon index.js"
+    "compile": "tsc",
+    "start": "tsc && node ./dist/index.js"
   },
   "keywords": [],
   "author": "",
@@ -20,7 +22,14 @@
     "node-html-parser": "^6.1.11"
   },
   "devDependencies": {
+    "@tsconfig/node-lts": "^20.1.0",
+    "@types/node": "^20.10.5",
+    "@typescript-eslint/eslint-plugin": "^6.15.0",
+    "@typescript-eslint/parser": "^6.15.0",
     "eslint": "^8.56.0",
-    "nodemon": "^3.0.2"
+    "nodemon": "^3.0.2",
+    "ts-node": "^10.9.2",
+    "tsx": "^4.7.0",
+    "typescript": "^5.3.3"
   }
 }
