@@ -59,20 +59,32 @@ module.exports = {
 		// if cached emoji exists, send cached emoji
 		const cachedEmojiFile = path.join(await getCacheDir(), sha(emojiObj.name + emojiObj.src));
 		if (await fileExists(cachedEmojiFile)) {
-			const [cachedEmoji, cachedEmojiErr] = await wrap(Jimp.read(cachedEmojiFile));
-			if (cachedEmojiErr) {
-				console.error(cachedEmojiErr);
-				return;
-			}
-
-			const [cachedToBuffer, cachedToBufferErr] = await wrap(cachedEmoji.getBufferAsync(emojiObj.animated ? Jimp.MIME_GIF : Jimp.MIME_PNG));
-			if (cachedToBufferErr) {
-				console.error(cachedToBufferErr);
-				return;
-			}
-
 			const attachment = new AttachmentBuilder('');
-			attachment.attachment = cachedToBuffer;
+
+			if (emojiObj.animated) {
+				const [cachedEmoji, cachedEmojiErr] = await wrap(GifUtil.read(cachedEmojiFile));
+				if (cachedEmojiErr) {
+					console.error(cachedEmojiErr);
+					return;
+				}
+
+				attachment.attachment = cachedEmoji.buffer;
+			}
+			else {
+				const [cachedEmoji, cachedEmojiErr] = await wrap(Jimp.read(cachedEmojiFile));
+				if (cachedEmojiErr) {
+					console.error(cachedEmojiErr);
+					return;
+				}
+				const [cachedToBuffer, cachedToBufferErr] = await wrap(cachedEmoji.getBufferAsync(Jimp.MIME_PNG));
+				if (cachedToBufferErr) {
+					console.error(cachedToBufferErr);
+					return;
+				}
+
+				attachment.attachment = cachedToBuffer;
+			}
+
 			attachment.name = `${emojiObj.name}.${emojiObj.animated ? 'gif' : 'png'}`;
 
 			// Delete original message
@@ -140,7 +152,6 @@ module.exports = {
 					});
 				frames.push(gifFrame);
 			}
-
 
 			// Encode gif
 			const codec = new GifCodec();
