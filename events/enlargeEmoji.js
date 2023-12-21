@@ -18,11 +18,15 @@ module.exports = {
 
 		// gets emoji string like <(a:)name:id> from message
 		const resultDiscordEmoji = message.content.match(/^<a?:\w+:\d+>$/g);
-
 		if (resultDiscordEmoji === null && resultUnicodeEmojis === null) {
 			return;
 		}
-		else if (resultDiscordEmoji === null && resultUnicodeEmojis !== null && resultUnicodeEmojis.length > 1) {
+		else if (resultDiscordEmoji === null &&
+						resultUnicodeEmojis !== null && resultUnicodeEmojis.length > 1) {
+			return;
+		}
+		else if (resultDiscordEmoji === null &&
+						resultUnicodeEmojis[0] !== message.content) {
 			return;
 		}
 
