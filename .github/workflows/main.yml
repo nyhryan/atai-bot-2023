@@ -11,6 +11,8 @@ jobs:
     steps:
       - name: Check out the repo to the runner
         uses: actions/checkout@v4
+
+      - run: echo $PATH
       
       - name: Stop Discord bot process
         run: pm2 stop ./ecosystem.config.cjs
