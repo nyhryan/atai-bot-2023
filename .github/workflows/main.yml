@@ -24,6 +24,7 @@ jobs:
 
       - name: Install packages and compile TypeScript
         run: |
+          cd /home/atai/actions-runner/_work/atai-bot-2023/atai-bot-2023
           bun install
           bunx tsc
 
