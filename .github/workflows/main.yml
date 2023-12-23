@@ -23,11 +23,9 @@ jobs:
       - name: Install packages
         run: |
           bun install
-
       - name: Bun Build
         run: |
-          pwd
-          bun build --entrypoints ./src/**/*.ts ./src/commands/**/*.ts --outdir ./dist --target bun
+          bun build --entrypoints src/*.ts src/**/*.ts src/commands/**/*.ts --outdir ./dist --target bun --root src
       - name: Redeploy bot
         run: |
           pm2 start ./ecosystem.config.cjs
