@@ -3,14 +3,17 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "type": "module",
   "scripts": {
-    "watch": "nodemon index.js"
+    "compile": "tsc",
+    "start": "tsc && node ./dist/index.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
     "axios": "^1.6.2",
+    "bun-types": "^1.0.19",
     "discord.js": "^14.14.1",
     "dotenv": "^16.3.1",
     "emoji-regex": "^10.3.0",
@@ -20,7 +23,12 @@
     "node-html-parser": "^6.1.11"
   },
   "devDependencies": {
+    "@tsconfig/node-lts": "^20.1.0",
+    "@typescript-eslint/eslint-plugin": "^6.15.0",
+    "@typescript-eslint/parser": "^6.15.0",
     "eslint": "^8.56.0",
-    "nodemon": "^3.0.2"
+    "nodemon": "^3.0.2",
+    "tsx": "^4.7.0",
+    "typescript": "^5.3.3"
   }
 }

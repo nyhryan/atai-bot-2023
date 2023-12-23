@@ -4,10 +4,22 @@
         "es2021": true,
         "node": true
     },
-    "extends": "eslint:recommended",
+    "extends": [
+        "eslint:recommended",
+        "plugin:@typescript-eslint/eslint-recommended"
+    ],
+    "parser": "@typescript-eslint/parser",
     "parserOptions": {
         "ecmaVersion": "latest"
     },
+    "plugins": [
+        "@typescript-eslint"
+    ],
+    "ignorePatterns": [
+        "node_modules",
+        "dist",
+        "coverage"
+    ],
     "rules": {
         "arrow-spacing": [
             "warn",
