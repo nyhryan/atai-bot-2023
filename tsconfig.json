@@ -1,6 +1,5 @@
 {
     "compilerOptions": {
-        "rootDir": "src",
         // add Bun type definitions
         "types": [
             "bun-types"
