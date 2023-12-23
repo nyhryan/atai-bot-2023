@@ -22,10 +22,11 @@ jobs:
           echo CLIENT_ID=${{ secrets.CLIENT_ID }} >> .env
           echo GUILD_ID=${{ secrets.GUILD_ID }} >> .env
 
-      - name: Compile TypeScript
-        run: bunx tsc
+      - name: Install packages and compile TypeScript
+        run: |
+          bun install
+          bunx tsc
 
       - name: Redeploy bot
         run: |
-          bun install
           pm2 start ./ecosystem.config.cjs
