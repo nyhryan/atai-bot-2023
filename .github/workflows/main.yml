@@ -24,10 +24,6 @@ jobs:
           echo CLIENT_ID=${{ secrets.CLIENT_ID }} >> .env
           echo GUILD_ID=${{ secrets.GUILD_ID }} >> .env
 
-      - uses: oven-sh/setup-bun@v1
-        with:
-           bun-version: latest
-
       - name: Install packages and compile TypeScript
         run: |
           bun install
