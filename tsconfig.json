@@ -1,16 +1,32 @@
 {
     "compilerOptions": {
         "outDir": "dist",
-        "target": "ES2022",
-        "lib": [
-            "ES2022"
-        ],
-        "module": "NodeNext",
-        "moduleResolution": "NodeNext",
+        "rootDir": "src",
         "sourceMap": true,
+        // add Bun type definitions
+        "types": [
+            "bun-types"
+        ],
+        // enable latest features
+        "lib": [
+            "ESNext"
+        ],
+        "module": "esnext",
+        "target": "esnext",
+        // if TS 5.x+
+        "moduleResolution": "bundler",
+        // "noEmit": true,
+        // "allowImportingTsExtensions": true,
+        "moduleDetection": "force",
+        "jsx": "react-jsx", // support JSX
+        "allowJs": true, // allow importing `.js` from `.ts`
+        // best practices
         "strict": true,
-        "allowSyntheticDefaultImports": true,
-        "resolveJsonModule": true
+        "forceConsistentCasingInFileNames": true,
+        "skipLibCheck": true,
+        "composite": true,
+        "downlevelIteration": true,
+        "allowSyntheticDefaultImports": true
     },
     "include": [
         "src/**/*"
@@ -18,8 +34,4 @@
     "exclude": [
         "node_modules",
     ],
-    "ts-node": {
-        "esm": true,
-        "compiler": "typescript"
-    }
 }

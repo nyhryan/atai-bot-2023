@@ -6,11 +6,11 @@ jobs:
   deploy-bot:
     runs-on: self-hosted
     steps:
-      - name: Stop Discord bot process
-        run: pm2 stop ~/ecosystem.config.js
-      
       - name: Check out the repo to the runner
-        uses: actions/checkout@v4.1.1
+        uses: actions/checkout@v4
+      
+      - name: Stop Discord bot process
+        run: pm2 stop ./ecosystem.config.js
 
       - name: Create .env file
         run: |
@@ -19,7 +19,10 @@ jobs:
           echo CLIENT_ID=${{ secrets.CLIENT_ID }} >> .env
           echo GUILD_ID=${{ secrets.GUILD_ID }} >> .env
 
+      - name: Compile TypeScript
+        run: bunx tsc
+
       - name: Redeploy bot
         run: |
-          npm i
-          pm2 start ~/ecosystem.config.js
+          bun install
+          pm2 start ./ecosystem.config.js

@@ -1,15 +1,9 @@
 import { Client, Collection, GatewayIntentBits } from 'discord.js';
 import fs from 'fs';
 import path from 'path';
-import { pathToFileURL } from 'url';
-
-import { getDirName } from './helper/helper.js';
 import { SlashCommandModuleType } from './deploy-commands.js';
 
-import dotenv from 'dotenv';
-dotenv.config();
-
-const __dirname = getDirName(import.meta.url);
+const __dirname = import.meta.dir;
 
 console.log('Starting ATAI bot...');
 
@@ -38,10 +32,11 @@ for (const folder of commandFolders) {
 	const commandFiles = fs.readdirSync(commandsPath).filter(file => file.endsWith('.js'));
 	for (const file of commandFiles) {
 		const filePath = path.join(commandsPath, file);
-		const command = await import(pathToFileURL(filePath).toString()) as SlashCommandModuleType;
+		const command = await import(Bun.pathToFileURL(filePath).toString()) as SlashCommandModuleType;
 		// Set a new item in the Collection with the key as the command name and the value as the exported module
 		if ('data' in command && 'execute' in command) {
 			client.commands.set(command.data.name, command);
+			console.log(`[INFO] Loaded command ${command.data.name} from ${filePath}`);
 		}
 		else {
 			console.log(`[WARNING] The command at ${filePath} is missing a required "data" or "execute" property.`);
@@ -55,7 +50,7 @@ const eventFiles = fs.readdirSync(eventsPath).filter(file => file.endsWith('.js'
 
 for (const file of eventFiles) {
 	const filePath = path.join(eventsPath, file);
-	const event = await import(pathToFileURL(filePath).toString());
+	const event = await import(Bun.pathToFileURL(filePath).toString());
 	if (event.once) {
 		client.once(event.name, (...args) => event.execute(...args));
 	}
