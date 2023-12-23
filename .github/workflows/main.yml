@@ -13,7 +13,7 @@ jobs:
         uses: actions/checkout@v4
       
       - name: Stop Discord bot process
-        run: pm2 stop ./ecosystem.config.js
+        run: pm2 stop ./ecosystem.config.cjs
 
       - name: Create .env file
         run: |
@@ -28,4 +28,4 @@ jobs:
       - name: Redeploy bot
         run: |
           bun install
-          pm2 start ./ecosystem.config.js
+          pm2 start ./ecosystem.config.cjs
