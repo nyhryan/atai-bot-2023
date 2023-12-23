@@ -1,5 +1,5 @@
 import { SlashCommandBuilder, PermissionFlagsBits, ChatInputCommandInteraction, PresenceStatusData } from 'discord.js';
-import { wrap } from '../../helper/helper.js';
+import { wrap } from '../../helper/helper.ts';
 
 
 /**
