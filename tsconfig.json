@@ -15,8 +15,8 @@
         "target": "esnext",
         // if TS 5.x+
         "moduleResolution": "bundler",
-        // "noEmit": true,
-        // "allowImportingTsExtensions": true,
+        "noEmit": true,
+        "allowImportingTsExtensions": true,
         "moduleDetection": "force",
         "jsx": "react-jsx", // support JSX
         "allowJs": true, // allow importing `.js` from `.ts`
