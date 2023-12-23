@@ -20,9 +20,13 @@ jobs:
           echo GUILD_ID=${{ secrets.GUILD_ID }} >> .env
       - name: Install bun
         uses: oven-sh/setup-bun@v1
-      - name: Install packages and build
+      - name: Install packages
         run: |
           bun install
+
+      - name: Bun Build
+        run: |
+          pwd
           bun build --entrypoints ./src/**/*.ts ./src/commands/**/*.ts --outdir ./dist --target bun
       - name: Redeploy bot
         run: |
