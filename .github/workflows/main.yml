@@ -11,18 +11,19 @@ jobs:
     steps:
       - name: Check out the repo to the runner
         uses: actions/checkout@v4
-
-      - run: echo $PATH
-      
-      - name: Stop Discord bot process
+        
+        - name: Stop Discord bot process
         run: pm2 stop ./ecosystem.config.cjs
-
-      - name: Create .env file
+        
+        - name: Create .env file
         run: |
-          touch .env
-          echo TOKEN=${{ secrets.TOKEN }} > .env
-          echo CLIENT_ID=${{ secrets.CLIENT_ID }} >> .env
-          echo GUILD_ID=${{ secrets.GUILD_ID }} >> .env
+        touch .env
+        echo TOKEN=${{ secrets.TOKEN }} > .env
+        echo CLIENT_ID=${{ secrets.CLIENT_ID }} >> .env
+        echo GUILD_ID=${{ secrets.GUILD_ID }} >> .env
+        
+      - name: Install bun
+        uses: oven-sh/setup-bun@v1
 
       - name: Install packages and compile TypeScript
         run: |
