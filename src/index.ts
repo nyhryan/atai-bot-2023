@@ -29,7 +29,7 @@ const commandFolders = fs.readdirSync(foldersPath);
 // add all commands in commands directory to client.commands collection
 for (const folder of commandFolders) {
 	const commandsPath = path.join(foldersPath, folder);
-	const commandFiles = fs.readdirSync(commandsPath).filter(file => file.endsWith('.js'));
+	const commandFiles = fs.readdirSync(commandsPath).filter(file => file.endsWith('.ts'));
 	for (const file of commandFiles) {
 		const filePath = path.join(commandsPath, file);
 		const command = await import(Bun.pathToFileURL(filePath).toString()) as SlashCommandModuleType;
@@ -46,7 +46,7 @@ for (const folder of commandFolders) {
 
 // add all events in events directory to client event listener
 const eventsPath = path.join(__dirname, 'events');
-const eventFiles = fs.readdirSync(eventsPath).filter(file => file.endsWith('.js'));
+const eventFiles = fs.readdirSync(eventsPath).filter(file => file.endsWith('.ts'));
 
 for (const file of eventFiles) {
 	const filePath = path.join(eventsPath, file);

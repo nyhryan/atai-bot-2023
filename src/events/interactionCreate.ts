@@ -2,7 +2,6 @@ import { Events, Interaction } from 'discord.js';
 import { wrap } from '../helper/helper.ts';
 import { CustomClient } from '../index.ts';
 
-
 export const name = Events.InteractionCreate;
 export async function execute(interaction: Interaction) {
 	if (interaction.isChatInputCommand()) {
@@ -15,7 +14,6 @@ export async function execute(interaction: Interaction) {
 
 		const [, error] = await wrap(command.execute(interaction));
 		if (error) {
-			console.error(error);
 			if (interaction.replied || interaction.deferred) {
 				await interaction.followUp({ content: 'There was an error while executing this command!', ephemeral: true });
 			}
