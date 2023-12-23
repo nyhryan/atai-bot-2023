@@ -1,8 +1,6 @@
 {
     "compilerOptions": {
-        "outDir": "dist",
         "rootDir": "src",
-        "sourceMap": true,
         // add Bun type definitions
         "types": [
             "bun-types"
@@ -18,7 +16,6 @@
         "noEmit": true,
         "allowImportingTsExtensions": true,
         "moduleDetection": "force",
-        "jsx": "react-jsx", // support JSX
         "allowJs": true, // allow importing `.js` from `.ts`
         // best practices
         "strict": true,
