@@ -7,7 +7,7 @@ import axios from 'axios';
 import emojiRegex from 'emoji-regex';
 import emojiJson from 'emojilib/dist/emoji-en-US.json';
 
-import * as helper from '../helper/helper.ts';
+import * as helper from '../helper/helper.js';
 
 export const name = Events.MessageCreate;
 

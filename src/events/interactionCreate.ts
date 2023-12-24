@@ -1,6 +1,6 @@
 import { Events, Interaction } from 'discord.js';
-import { wrap } from '../helper/helper.ts';
-import { CustomClient } from '../index.ts';
+import { wrap } from '../helper/helper.js';
+import { CustomClient } from '../index.js';
 
 export const name = Events.InteractionCreate;
 export async function execute(interaction: Interaction) {

@@ -1,6 +1,9 @@
 {
     "compilerOptions": {
         // add Bun type definitions
+        "outDir": "dist",
+        "rootDir": "src",
+        "sourceMap": true,
         "types": [
             "bun-types"
         ],
@@ -12,8 +15,8 @@
         "target": "esnext",
         // if TS 5.x+
         "moduleResolution": "bundler",
-        "noEmit": true,
-        "allowImportingTsExtensions": true,
+        "noEmit": false,
+        // "allowImportingTsExtensions": true,
         "moduleDetection": "force",
         "allowJs": true, // allow importing `.js` from `.ts`
         // best practices
@@ -22,7 +25,8 @@
         "skipLibCheck": true,
         "composite": true,
         "downlevelIteration": true,
-        "allowSyntheticDefaultImports": true
+        "allowSyntheticDefaultImports": true,
+        "pretty": true,
     },
     "include": [
         "src/**/*"
