@@ -51,7 +51,11 @@ export async function execute(message: Message) {
 		emojiObj.animated = false;
 
 		const emoji = resultUnicodeEmojis!.at(0);
-		emojiObj.name = emojiJson[emoji as keyof typeof emojiJson][0].replace(/[_\s]/g, '-');
+		emojiObj.name = emojiJson[emoji as keyof typeof emojiJson][0].replace(/[_\s]/g, '-') ?? undefined;
+		if (emojiObj.name === null) {
+			console.error(`No emoji name found for ${emoji}`);
+			return;
+		}
 
 		// get emoji image from emojipedia
 		const [response, responseErr] = await helper.wrap(axios.get(`https://emojipedia.org/microsoft-3D-fluent/15.0/${emojiObj.name}`));
@@ -60,11 +64,15 @@ export async function execute(message: Message) {
 			return;
 		}
 		// get the actual image file from the html page of emojipedia
-		emojiObj.src = parse(response.data)?.querySelector('main section > div > div > div > div > img')?.getAttribute('src');
+		emojiObj.src = parse(response.data)?.querySelector('main section > div > div > div > div > img')?.getAttribute('src') ?? undefined;
+		if (emojiObj.src === null) {
+			console.error(`No emoji src found for ${emoji}`);
+			return;
+		}
 	}
 
 	// if cached emoji exists, send cached emoji
-	const cachedEmojiFile = path.join(await helper.getCacheDir(), helper.sha(emojiObj.name! + emojiObj.src));
+	const cachedEmojiFile = path.join(await helper.getCacheDir(), helper.sha(emojiObj.name! + emojiObj.src!));
 	if (await helper.fileExists(cachedEmojiFile)) {
 		const attachment = new AttachmentBuilder('');
 
@@ -78,37 +86,25 @@ export async function execute(message: Message) {
 			attachment.attachment = cachedEmoji.buffer;
 		}
 		else {
-			const [cachedEmoji, cachedEmojiErr] = await helper.wrap(Jimp.read(cachedEmojiFile));
-			if (cachedEmojiErr) {
-				console.error(cachedEmojiErr);
-				return;
-			}
-			const [cachedToBuffer, cachedToBufferErr] = await helper.wrap(cachedEmoji.getBufferAsync(Jimp.MIME_PNG));
-			if (cachedToBufferErr) {
-				console.error(cachedToBufferErr);
-				return;
-			}
-
-			attachment.attachment = cachedToBuffer;
+			Jimp.read(cachedEmojiFile)
+				.catch((error) => console.error(`Error reading cached emoji ${emojiObj.name}:\n${error}`))
+				.then(async (readFile) => {
+					attachment.attachment = await readFile!.getBufferAsync(Jimp.MIME_PNG);
+				});
 		}
 
-		attachment.name = `${emojiObj.name}.${emojiObj.animated ? 'gif' : 'png'}`;
-
+		attachment.name = `emoji.${emojiObj.animated ? 'gif' : 'png'}`;
 		// Delete original message
 		const channel = message.client.channels.cache.get(message.channelId) as TextChannel;
-		const [, deleteErr] = await helper.wrap(message.delete());
-		if (deleteErr) {
-			console.error(deleteErr);
-			return;
-		}
+		await message.delete();
 
 		const embedMesssage = new EmbedBuilder()
 			.setColor(0x9accfd)
 			.setAuthor({
 				name: message.author.globalName!,
-				iconURL: `https://cdn.discordapp.com/avatars/${message.author.id}/${message.author.avatar}.${emojiObj.animated ? 'gif' : 'png'}`,
+				iconURL: `https://cdn.discordapp.com/avatars/${message.author.id}/${message.author.avatar}.png`,
 			})
-			.setImage(`attachment://${attachment.name}`);
+			.setImage(`attachment://emoji.${emojiObj.animated ? 'gif' : 'png'}`);
 
 		// Send enlarged emoji
 		const [, sendErr] = await helper.wrap(channel.send({
@@ -116,7 +112,7 @@ export async function execute(message: Message) {
 			files: [attachment],
 		}));
 		if (sendErr) {
-			console.error(sendErr);
+			console.error(`Error sending enlarged emoji ${emojiObj.name}:\n${sendErr}`);
 			return;
 		}
 
@@ -179,7 +175,6 @@ export async function execute(message: Message) {
 
 		// Set attachment
 		attachment.attachment = encodedGif.buffer;
-		attachment.name = `${emojiObj.name}.gif`;
 	}
 	// if it's not animated, it's a non-animated discord custom emoji or an unicode emoji
 	else if (!emojiObj.animated) {
@@ -207,16 +202,13 @@ export async function execute(message: Message) {
 
 		// Set attachment
 		attachment.attachment = pngBuffer;
-		attachment.name = `${emojiObj.name}.png`;
 	}
+
+	attachment.name = `emoji.${emojiObj.animated ? 'gif' : 'png'}`;
 
 	// Delete original message
 	const channel = message.client.channels.cache.get(message.channelId) as TextChannel;
-	const [, deleteErr] = await helper.wrap(message.delete());
-	if (deleteErr) {
-		console.error(deleteErr);
-		return;
-	}
+	await message.delete();
 
 	const embedMesssage = new EmbedBuilder()
 		.setColor(0x9accfd)
@@ -224,7 +216,7 @@ export async function execute(message: Message) {
 			name: message.author.globalName!,
 			iconURL: `https://cdn.discordapp.com/avatars/${message.author.id}/${message.author.avatar}.png`,
 		})
-		.setImage(`attachment://${attachment.name}`);
+		.setImage('attachment://emoji.png');
 
 	// Send enlarged emoji
 	const [, sendErr] = await helper.wrap(channel.send({
@@ -232,7 +224,8 @@ export async function execute(message: Message) {
 		files: [attachment],
 	}));
 	if (sendErr) {
-		console.error(sendErr);
+		console.error(`Error sending enlarged emoji ${emojiObj.name}:\n${sendErr}`);
 		return;
 	}
+
 }
