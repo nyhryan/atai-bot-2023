@@ -9,21 +9,16 @@ import { fileURLToPath } from 'url';
  * @returns A promise that resolves to a `[value, reason]` array.
  */
 export const wrap = async (promise: Promise<any>) => {
-	return Promise.allSettled([promise])
-		.then(([result]) => {
-			if (result.status === 'fulfilled') {
-				return [result.value, undefined];
-			}
-			else {
-				return [undefined, result.reason];
-			}
-		});
+	const [result] = await Promise.allSettled([promise]);
+	const value = result.status === 'fulfilled' ? result.value : undefined;
+	const reason = result.status === 'rejected' ? result.reason : undefined;
+	return [value, reason];
 };
 
 export const getDirName = (url: string | URL) => path.dirname(fileURLToPath(url));
 
 export const getCacheDir = (() => {
-	const cacheDir = './.cache';
+	const cacheDir = './.emoji_cache';
 
 	let prom: Promise<string> | undefined;
 	return () => prom = (prom || (async () => {
