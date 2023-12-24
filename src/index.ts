@@ -36,10 +36,10 @@ for (const folder of commandFolders) {
 		// Set a new item in the Collection with the key as the command name and the value as the exported module
 		if ('data' in command && 'execute' in command) {
 			client.commands.set(command.data.name, command);
-			console.log(`[INFO] Loaded command ${command.data.name} from ${filePath}`);
+			console.log(`[INFO] Loaded command ${command.data.name} from ${file}`);
 		}
 		else {
-			console.log(`[WARNING] The command at ${filePath} is missing a required "data" or "execute" property.`);
+			console.error(`[WARNING] The command at ${filePath} is missing a required "data" or "execute" property.`);
 		}
 	}
 }
@@ -57,6 +57,7 @@ for (const file of eventFiles) {
 	else {
 		client.on(event.name, (...args) => event.execute(...args));
 	}
+	console.log(`[INFO] Loaded event ${event.name} from ${file}`);
 }
 
 // login to Discord with your app's token
