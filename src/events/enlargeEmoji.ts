@@ -71,6 +71,8 @@ export async function execute(message: Message) {
 		}
 	}
 
+	console.log(`User ${message.author.globalName} sent emoji [${emojiObj.name}] at #${(message.channel as TextChannel).name}`);
+
 	// if cached emoji exists, send cached emoji
 	const cachedEmojiFile = path.join(await helper.getCacheDir(), helper.sha(emojiObj.name! + emojiObj.src!));
 	if (await helper.fileExists(cachedEmojiFile)) {
