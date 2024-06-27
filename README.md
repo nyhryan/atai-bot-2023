@@ -15,3 +15,15 @@
 - Bun runtime(alternative of node.js)
 - Google Compute Engine's free tier VM
 - Visual Studio Code
+
+## Usage
+```shell
+# install packages first
+$ bun install
+
+# run TypeScript compiler on watch mode, based on tsconfig.json
+$ bunx tsc -w
+
+# run the bot!
+$ bun --watch run dist/index.js
+```
